@@ -1,8 +1,14 @@
 import { useGSAP } from '@gsap/react';
 import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
+import { useMediaQuery } from 'react-responsive';
+import { useRef } from 'react';
  
 const Hero = () => {
+    const videoRef = useRef(null);
+    const videoContainerRef = useRef(null);
+    const isMobile = useMediaQuery({maxWidth: '767'});
+
     useGSAP(()=> {
         // create the split texts
         const heroSplit = new SplitText('.title', { type: ' words, chars' });
@@ -38,6 +44,25 @@ const Hero = () => {
                 scrub: true,
             }
         }).to('.left-leaf', {y: 200},0).to('.right-leaf', {y: -200},0 )
+
+        // animate the video
+        const videoTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: '#hero',
+                start: isMobile ? 'top 50%' : 'center 60%',
+                end: isMobile ? '120% top' : 'bottom top',
+                scrub: true,
+                pin: true
+            },
+        });
+
+        videoRef.current.onloadedmetadata = () => {
+            videoTimeline.to(videoRef.current, {
+                currentTime: videoRef.current.duration,
+            })
+        }; 
+
+        
     }, [])
 
     return (<><section id="hero" className="noisy">
@@ -62,7 +87,11 @@ const Hero = () => {
                 </div>
             </div>
         </div>
-    </section></>)
+    </section>
+    <div ref={videoContainerRef} className="video fixed inset-0">
+        <video src="/videos/input.mp4" muted playsInline preload="auto" ref={videoRef}></video>
+    </div>
+    </>)
 }
 
 export default Hero;
