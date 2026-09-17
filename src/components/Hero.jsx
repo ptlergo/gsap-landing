@@ -3,13 +3,12 @@ import { SplitText } from 'gsap/all';
 import gsap from 'gsap';
 import { useMediaQuery } from 'react-responsive';
 import { useRef } from 'react';
- 
+
 const Hero = () => {
     const videoRef = useRef(null);
-    const videoContainerRef = useRef(null);
-    const isMobile = useMediaQuery({maxWidth: '767'});
+    const isMobile = useMediaQuery({ maxWidth: '767' });
 
-    useGSAP(()=> {
+    useGSAP(() => {
         // create the split texts
         const heroSplit = new SplitText('.title', { type: ' words, chars' });
         const paragraphSplit = new SplitText('.subtitle', { type: 'lines' });
@@ -18,7 +17,7 @@ const Hero = () => {
         heroSplit.chars.forEach((char) => char.classList.add('text-gradient'));
 
         // animate the hero text
-        gsap.from(heroSplit.chars,{
+        gsap.from(heroSplit.chars, {
             yPercent: 100,
             duration: 1.8,
             ease: 'expo.out',
@@ -29,12 +28,12 @@ const Hero = () => {
         gsap.from(paragraphSplit.lines, {
             opacity: 0,
             y: 100,
-            duration:1.8,
-            ease: 'expo.out', 
+            duration: 1.8,
+            ease: 'expo.out',
             stagger: 0.6,
             delay: 1
         })
-        
+
         // animate the leafs 
         gsap.timeline({
             scrollTrigger: {
@@ -43,14 +42,17 @@ const Hero = () => {
                 end: 'bottom top',
                 scrub: true,
             }
-        }).to('.left-leaf', {y: 200},0).to('.right-leaf', {y: -200},0 )
+        }).to('.left-leaf', { y: 200 }, 0).to('.right-leaf', { y: -200 }, 0)
+
+        const startVal = isMobile ? 'top 50%' : 'center 55%';
+        const endVal = isMobile ? '110% top' : 'bottom top';
 
         // animate the video
         const videoTimeline = gsap.timeline({
             scrollTrigger: {
                 trigger: '#hero',
-                start: isMobile ? 'top 50%' : 'center 60%',
-                end: isMobile ? '120% top' : 'bottom top',
+                start: startVal,
+                end: endVal,
                 scrub: true,
                 pin: true
             },
@@ -60,9 +62,9 @@ const Hero = () => {
             videoTimeline.to(videoRef.current, {
                 currentTime: videoRef.current.duration,
             })
-        }; 
+        };
 
-        
+
     }, [])
 
     return (<><section id="hero" className="noisy">
@@ -88,9 +90,9 @@ const Hero = () => {
             </div>
         </div>
     </section>
-    <div ref={videoContainerRef} className="video fixed inset-0">
-        <video src="/videos/input.mp4" muted playsInline preload="auto" ref={videoRef}></video>
-    </div>
+        <div className="video absolute inset-0">
+            <video src="/videos/output.mp4" muted playsInline preload="auto" ref={videoRef} className="fixed"></video>
+        </div>
     </>)
 }
 
